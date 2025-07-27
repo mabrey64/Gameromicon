@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Gameromicon.MainPage"
+             Title="Welcome to Gameronicom ">
+
+    <ScrollView>
+        <VerticalStackLayout
+            <Label Text="THE GAMERNOMICON"
+                   FontSize="32"
+                   HorizontalOptions="Center"
+                   VerticalOptions="CenterAndExpand" 
+                   TextColor="DarkGreen"/>
+            
+            <Label Text="Welcome! Please Sign In or Sign Up"
+                     FontSize="24"
+                     HorizontalOptions="Center"
+                     VerticalOptions="CenterAndExpand" />
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

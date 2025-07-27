@@ -8,8 +8,13 @@
     Title="Gameromicon">
 
     <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+        Title="Login"
+        ContentTemplate="{DataTemplate local:AuthPage}"
+        Route="AuthPage" />
+
+    <!--<ShellContent
+        Title="My Games"
+        ContentTemplate="{DataTemplate local:GameListPage}"
+        Route="GameListPage" />-->
 
 </Shell>
