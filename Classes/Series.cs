@@ -15,7 +15,7 @@ namespace Gameromicon.Classes
 
         public Series()
         {
-            
+
         }
 
         /*
@@ -27,7 +27,7 @@ namespace Gameromicon.Classes
         {
             if (string.IsNullOrWhiteSpace(Name))
             {
-                Console.WriteLine("Validation error: Name cannot be empty.");
+                System.Console.WriteLine("Validation error: Name cannot be empty.");
                 return false;
             }
             return true;
@@ -42,5 +42,7 @@ namespace Gameromicon.Classes
         public override string ToString()
         {
             return $"Series ID: {ID}, Name: {Name}, Publisher ID: {PublisherID}, Profile ID: {ProfileID}";
+
         }
+    }
 }

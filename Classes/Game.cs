@@ -47,7 +47,7 @@ namespace Gameromicon.Classes
         {
             if(string.IsNullOrWhiteSpace(Name))
             {
-                Console.WriteLine("Validation error: Name cannot be empty.");
+                System.Console.WriteLine("Validation error: Name cannot be empty.");
                 return false;
             }
             return true;
