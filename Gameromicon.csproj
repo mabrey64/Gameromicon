@@ -65,10 +65,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="ViewModels\" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <Compile Update="Pages\AuthPage.xaml.cs">
 	    <DependentUpon>AuthPage.xaml</DependentUpon>
 	  </Compile>
