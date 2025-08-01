@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Gameromicon.Pages.GameListPage"
+             Title="My Game Collection">
+    <Grid RowDefinitions="Auto, *, Auto">
+        <!--Top Bar: Search, Sort, Filter-->
+        <HorizontalStackLayout Grid.Row="0" Spacing="8" Padding="12" BackgroundColor="#3A4A49">
+            <Border Stroke="#1E2827"
+                    StrokeThickness="1"
+                    Background="#1E2827"
+                    StrokeShape="RoundRectangle 8"
+                    Padding="10"
+                    HorizontalOptions="FillAndExpand">
+            <Entry Placeholder="Search games..."
+                   Text="{Binding SearchQuery}"
+                   HorizontalOptions="FillAndExpand"
+                   FontSize="Medium"
+                   BackgroundColor="Transparent"
+                   PlaceholderColor="#ECF0F1"
+                   TextColor="#ECF0F1" />
+            </Border>
+
+            <!--Sort Button/Picker-->
+            <Button Text="Sort"
+                    Command="{Binding SortCommand}"
+                    BackgroundColor="#006400"
+                    TextColor="Black"
+                    FontSize="Medium"
+                    CornerRadius="8"
+                    Padding="10"/>
+
+            <!--Filter Button-->
+            <Button Text="Filter"
+                    Command="{Binding FilterCommand}"
+                    BackgroundColor="#006400"
+                    TextColor="Black"
+                    FontSize="Medium"
+                    CornerRadius="8"
+                    Padding="10"/>
+        </HorizontalStackLayout>
+        <!--Game List: Collection of Game Cards-->
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding GameCollection}"
+                        SelectionMode="Single"
+                        SelectedItem="{Binding SelectedGame}"
+                        SelectionChangedCommand="{Binding SelectGameCommand}"
+                        Margin="15,0,15,0">
+            <CollectionView.EmptyView>
+                <VerticalStackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                    <Label Text="No games in your collection yet!"
+                           FontSize="Large"
+                           TextColor="#ECF0F1"
+                           HorizontalOptions="Center" />
+                    <Label Text="Tap the '+' button to add your first game."
+                           FontSize="Medium"
+                           TextColor="#AAAAAA"
+                           HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                <Frame BorderColor="#1A743F" CornerRadius="10" Padding="15" HasShadow="True">
+                    <Grid ColumnDefinitions="Auto, *, Auto">
+                        <!--Game Cover Image/Boxart-->
+                        <Image Grid.Column="0"
+                               Source="{Binding CoverImage}"
+                               WidthRequest="80"
+                               HeightRequest="120"
+                               Aspect="AspectFill"
+                               Margin="0,0,10,0"/>
+                        <!--Game Details-->
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="{Binding Name}"
+                                   FontSize="Large"
+                                   FontAttributes="Bold"
+                                   TextColor="#ECF0F1"/>
+                            <Label Text="{Binding GenreID, StringFormat='Genre ID: {0}'}"
+                                   FontSize="Small"
+                                   TextColor="#AAAAAA"/>
+                            <Label Text="{Binding PublisherID, StringFormat='Publisher ID: {0}'}"
+                                   FontSize="Small"
+                                   TextColor="#AAAAAA"/>
+                            <Label Text="{Binding SeriesID, StringFormat='Series ID: {0}'}"
+                                   FontSize="Small"
+                                   TextColor="#AAAAAA"/>
+                            <Label Text="{Binding CollectedDate, StringFormat='Added: {0:d}'}"
+                                   FontSize="Small"
+                                   TextColor="#AAAAAA"/>
+                        </VerticalStackLayout>
+                        <!--Status Indicators-->
+                        <VerticalStackLayout Grid.Column="2" HorizontalOptions="End" VerticalOptions="Center">
+                            <!-- Updated: CiB status color to deep green -->
+                            <Label Text="CiB" IsVisible="{Binding CiB}" TextColor="#1E8449" FontAttributes="Bold" />
+                            <!-- Updated: Beaten status color to a tech-themed purple -->
+                            <Label Text="Beaten" IsVisible="{Binding IsBeaten}" TextColor="#8A2BE2" FontAttributes="Bold" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </Frame>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>
+
+        <!--Bottom Bar: Add Game Button-->
+            <Button Grid.Row="2"
+                    Text="+"
+                    Command="{Binding AddGameCommand}"
+                    BackgroundColor="#006400"
+                    TextColor="Black"
+                    FontSize="Medium"
+                    CornerRadius="8"
+                    HorizontalOptions="EndAndExpand"
+                    Padding="10"/> 
+    </Grid>
+</ContentPage>
