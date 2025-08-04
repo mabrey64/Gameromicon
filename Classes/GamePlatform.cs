@@ -8,20 +8,12 @@ namespace Gameromicon.Classes
 {
     public class GamePlatform
     {
-        public int ID { get; set; } // Unique identifier for the console
-        public string Name { get; set; } // Name of the console
-        public GamePlatform()
+        public int GamePlatformID { get; set; } // Unique identifier for the game console relationship
+        public int GameID { get; set; } // Foreign key to the game
+        public int GameConsoleID { get; set; } // Foreign key to the platform
+        public GamePlatform() 
         {
             // Default constructor
-        }
-        /*
-         * Method: ToString
-         * Returns a string representation of the console object.
-         * This can be used for debugging or logging purposes.
-         */
-        public override string ToString()
-        {
-            return $"{ID} {Name}";
         }
     }
 }
