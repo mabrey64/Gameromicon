@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Gameromicon.Classes
 {
-    public class Console
+    public class GamePlatform
     {
         public int ID { get; set; } // Unique identifier for the console
         public string Name { get; set; } // Name of the console
-        public Console()
+        public GamePlatform()
         {
             // Default constructor
         }

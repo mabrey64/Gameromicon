@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Gameromicon.Pages.AddGamePage"
+             Title="AddGamePage">
+
+    <ContentPage.BindingContext>
+        <vm:GameDetailsViewModel />
+    </ContentPage.BindingContext>
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="12" Padding="20">
+            <Label Text="Add New Game"
+                   FontSize="Large"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   Margin="0,0,10,0"/>
+            
+            <Entry Placeholder="Name of Game"
+                   Text="{Binding GameName}"
+                   FontSize="Medium"
+                   BackgroundColor="#F0F0F0"/>
+
+            <Button Text="Scan Barcode"
+                    Command="{Binding ScanBarcodeCommand}"
+                    BackgroundColor="#007AFF"
+                    TextColor="White"
+                    FontSize="Medium"
+                    HorizontalOptions="FillAndExpand"
+                    Margin="0,10,0,0"/>
+
+            <Label Text="OR"
+                   HorizontalOptions="Center"
+                   FontSize="Medium"
+                   Margin="0,10,0,0"/>
+            
+            <!-- External API Search-->
+            <Entry Placeholder="Search Title"
+                   Text="{Binding SearchTitleQuery}"
+                   FontSize="Medium"
+                   BackgroundColor="#F0F0F0"/>
+            <Picker Title="Plaform for search"
+                    ItemsSource="{Binding AvailableConsoles}"
+                    ItemDisplayBinding="{Binding Name}"
+                    SelectedItem="{Binding SelectedConsole}"
+                    FontSize="Medium"
+                    BackgroundColor="#F0F0F0"
+                    Margin="0,10,0,20"/>
+            <Button Text="Search External API"
+                    Command="{Binding SearchExternalApiCommand}"
+                    BackgroundColor="#28A745"
+                    TextColor="White"
+                    FontSize="Medium"
+                    HorizontalOptions="FillAndExpand"/>
+
+
+            <!-- Auto-filled Details from Search -->
+            <Frame BorderColor="#DDDDDD" CornerRadius="8" Padding="15" Margin="0,0,0,20">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Game Details from Search (Optional)" FontAttributes="Bold" FontSize="Small" TextColor="Gray" />
+                    <Image Source="placeholder.png"
+                           Aspect="AspectFit"
+                           HeightRequest="150"
+                           HorizontalOptions="Center" />
+                    <Label Text="{Binding CurrentGame.Name}" FontAttributes="Bold" FontSize="Large" HorizontalOptions="Center" />
+                    <Label Text="{Binding CurrentGame.Description}" FontSize="Small" LineBreakMode="WordWrap" />
+                </VerticalStackLayout>
+            </Frame>
+            
+            <!-- Manual Input Fields-->
+            <DatePicker Date="{Binding CurrentGame.CollectedDate}"
+                        Format="d"
+                        FontSize="Medium"
+                        BackgroundColor="#F0F0F0"
+                        Margin="0,10,0,0"/>
+            <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                <CheckBox IsChecked="{Binding CurrentGame.CiB}"/>
+                <Label Text="CiB (Complete in Box)" VerticalOptions="Center" FontSize="Medium"/>
+            </HorizontalStackLayout>
+            <Picker Title="Condition"
+                    ItemsSource="{Binding AvailableConditions}"
+                    SelectedItem="{Binding CurrentGame.Condition}"
+                    ItemDisplayBinding="{Binding Name}"
+                    FontSize="Medium"
+                    BackgroundColor="#F0F0F0"
+                    Margin="0,10,0,0"/>
+            <Entry Placeholder="Region (e.g., NTSC-U, PAL)"
+                     Text="{Binding CurrentGame.Region}"
+                     FontSize="Medium"
+                     BackgroundColor="#F0F0F0"
+                     Margin="0,10,0,0"/>
+            <Entry Placeholder="Number of Copies"
+                     Text="{Binding CurrentGame.NumberOfCopies}"
+                     FontSize="Medium"
+                     BackgroundColor="#F0F0F0"
+                     Keyboard="Numeric"
+                     Margin="0,10,0,0"/>
+            <DatePicker Date="{Binding CurrentGame.ReleaseDate}"
+                        Format="d"
+                        FontSize="Medium"
+                        BackgroundColor="#F0F0F0"
+                        Margin="0,10,0,0"/>
+            <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                <CheckBox IsChecked="{Binding CurrentGame.IsBeaten}" />
+                <Label Text="Is Beaten" VerticalOptions="Center" FontSize="Medium" />
+            </HorizontalStackLayout>
+            <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                <CheckBox IsChecked="{Binding CurrentGame.Is100Completed}" />
+                <Label Text="Is 100% Completed" VerticalOptions="Center" FontSize="Medium" />
+            </HorizontalStackLayout>
+            <Editor Placeholder="Description"
+                    Text="{Binding CurrentGame.Description}"
+                    AutoSize="TextChanges"
+                    HeightRequest="100"
+                    FontSize="Medium"
+                    BackgroundColor="#F0F0F0" />
+            <Picker Title="Publisher"
+                    ItemsSource="{Binding AvailablePublishers}"
+                    ItemDisplayBinding="{Binding Name}"
+                    SelectedItem="{Binding SelectedPublisher}"
+                    FontSize="Medium"
+                    CornerRadius="8"
+                    Padding="12"
+                    BackgroundColor="#F0F0F0" />
+            <Picker Title="Series"
+                    ItemsSource="{Binding AvailableSeries}"
+                    ItemDisplayBinding="{Binding Name}"
+                    SelectedItem="{Binding SelectedSeries}"
+                    FontSize="Medium"
+                    CornerRadius="8"
+                    Padding="12"
+                    BackgroundColor="#F0F0F0" />
+            <!--Multi-select for Genres and Platforms-->
+            <Label Text="Genres (Multi-select Placeholder)" FontAttributes="Bold" Margin="0,10,0,0" />
+            <Frame BorderColor="#DDDDDD" CornerRadius="8" Padding="12">
+                <Label Text="[ Placeholder for Multi-select Genre UI ]" TextColor="Gray" />
+            </Frame>
+            <Label Text="Platforms (Multi-select Placeholder)" FontAttributes="Bold" Margin="0,10,0,0" />
+            <Frame BorderColor="#DDDDDD" CornerRadius="8" Padding="12">
+                <Label Text="[ Placeholder for Multi-select Platform UI ]" TextColor="Gray" />
+            </Frame>
+            <!--Save and Delete Buttons-->
+            <Button Text="SAVE GAME"
+                    Command="{Binding SaveGameCommand}"
+                    BackgroundColor="#007bff"
+                    TextColor="White"
+                    FontSize="Large"
+                    CornerRadius="10"
+                    HeightRequest="60"
+                    Margin="0,20,0,10" />
+            <Button Text="DELETE GAME"
+                    Command="{Binding DeleteGameCommand}"
+                    BackgroundColor="#dc3545"
+                    TextColor="White"
+                    FontSize="Large"
+                    CornerRadius="10"
+                    HeightRequest="60"
+                    Margin="0,0,0,20" />
+
+
+    </ScrollView>
+</ContentPage>
