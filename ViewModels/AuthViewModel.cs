@@ -5,167 +5,164 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Gameromicon.Classes ;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Gameromicon.Classes;
 using Microsoft.Maui.Controls;
+using Microsoft.Maui.Storage;
 
 namespace Gameromicon.ViewModels
 {
-    public class AuthViewModel : BaseViewModel
+    public partial class AuthViewModel : BaseViewModel
     {
-        private bool IsValid;
-        private string ProfilePassword;
-        private string ProfileEmail;
-        private string _email;
-        public string Email
-        {
-            get => _email;
-            set
-            {
-                _email = value;
-                OnPropertyChanged();
-                IsEmailErrorVisible = true;
-                ((Command)SignInCommand).ChangeCanExecute();
-                ((Command)SignUpCommand).ChangeCanExecute();
-            }
-        }
-        private string _password;
-        public string Password
-        {
-            get => _password;
-            set
-            {
-                _password = value;
-                OnPropertyChanged();
-                IsPasswordErrorVisible = true;
-                PasswordErrorMessage = string.Empty;
-                ((Command)SignInCommand).ChangeCanExecute();
-                ((Command)SignUpCommand).ChangeCanExecute();
-            }
-        }
-        private string _confirmPassword;
-        public string ConfirmPassword
-        {
-            get => _confirmPassword;
-            set
-            {
-                _confirmPassword = value;
-                OnPropertyChanged();
-                IsConfirmPasswordErrorVisible = true;
-                ConfirmPasswordErrorMessage = string.Empty;
-                ((Command)SignInCommand).ChangeCanExecute();
-                ((Command)SignUpCommand).ChangeCanExecute();
-            }
-        }
-        private string _username;
-        public string Username
-        {
-            get => _username;
-            set
-            {
-                _username = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty] private string name;
+        [ObservableProperty] private string email;
+        [ObservableProperty] private string password;
+        [ObservableProperty] private string confirmPassword;
+        [ObservableProperty] private bool isSignUpMode;
+        [ObservableProperty] private bool isBusy;
+        [ObservableProperty] private bool isLoginSuccessful;
+        [ObservableProperty] private bool isSignUpSuccessful;
+        [ObservableProperty] private bool isNameErrorVisible;
+        [ObservableProperty] private string nameErrorMessage;
+        [ObservableProperty] private bool isEmailErrorVisible;
+        [ObservableProperty] private string emailErrorMessage;
+        [ObservableProperty] private bool isPasswordErrorVisible;
+        [ObservableProperty] private string passwordErrorMessage;
+        [ObservableProperty] private bool isConfirmPasswordErrorVisible;
+        [ObservableProperty] private string confirmPasswordErrorMessage;
 
-        // UI State Properties
-        private bool _isSignUpMode;
-        public bool IsSignUpMode
-        {
-            get => _isSignUpMode;
-            set
-            {
-                _isSignUpMode = value;
-                OnPropertyChanged();
+        public bool IsSignInMode => !IsSignUpMode;
 
-            }
-        }
-
-        private bool _isBusy;
-        public bool IsBusy
+        [RelayCommand]
+        private async Task SignInAsync()
         {
-            get => _isBusy;
-            set
+            IsBusy = true;
+            try
             {
-                if (_isBusy != value)
+                ClearAllErrors();
+                bool isValid = true;
+
+                // Retrieve saved credentials
+                var savedEmail = await SecureStorage.Default.GetAsync("UserEmail");
+                var savedPassword = await SecureStorage.Default.GetAsync("UserPassword");
+
+                Debug.WriteLine($"Saved Email: {savedEmail}");
+                Debug.WriteLine($"Saved Password: {savedPassword}");
+
+                // Validate input
+                if (string.IsNullOrWhiteSpace(Email) || !Email.Contains("@"))
                 {
-                    _isBusy = value;
-                    OnPropertyChanged();
-                    // Notify commands can execute changed
-                    ((Command)SignInCommand).ChangeCanExecute();
-                    ((Command)SignUpCommand).ChangeCanExecute();
+                    IsEmailErrorVisible = true;
+                    EmailErrorMessage = "Please enter a valid email.";
+                    isValid = false;
+                }
+                if (string.IsNullOrWhiteSpace(Password) || Password.Length < 6)
+                {
+                    IsPasswordErrorVisible = true;
+                    PasswordErrorMessage = "Password must be at least 6 characters.";
+                    isValid = false;
+                }
+
+                // Check credentials if input is valid
+                if (isValid)
+                {
+                    if (Email == savedEmail && Password == savedPassword)
+                    {
+                        Debug.WriteLine("SignIn worked! Credentials matched.");
+                        Debug.WriteLine("SignInAsync executed");
+                        await Task.Delay(1500);
+                        IsLoginSuccessful = true;
+                        OnPropertyChanged(nameof(IsLoginSuccessful));
+                        ClearAllFields();
+                    }
+                    else
+                    {
+                        Debug.WriteLine("SignIn failed! Credentials did not match.");
+                        IsEmailErrorVisible = true;
+                        EmailErrorMessage = "Invalid email or password.";
+                        IsLoginSuccessful = false;
+                    }
                 }
             }
-        }
-
-        private bool _isLoginSuccessful;
-        public bool IsLoginSuccessful
-        {
-            get => _isLoginSuccessful;
-            set
+            catch (Exception ex)
             {
-                if (_isLoginSuccessful != value)
+                Debug.WriteLine($"SignInAsync Exception: {ex.Message}");
+                IsLoginSuccessful = false;
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+        [RelayCommand]
+        private async Task SignUpAsync()
+        {
+            Debug.WriteLine("SignUpAsync executed");
+
+            IsBusy = true;
+            try
+            {
+                ClearAllErrors();
+                bool isValid = true;
+                if (string.IsNullOrWhiteSpace(Name))
                 {
-                    _isLoginSuccessful = value;
-                    OnPropertyChanged();
+                    IsNameErrorVisible = true;
+                    NameErrorMessage = "Name cannot be empty.";
+                    Debug.WriteLine($"Name errpr set: {IsNameErrorVisible}, {NameErrorMessage}");
+                    isValid = false;
                 }
+                if (string.IsNullOrWhiteSpace(Email) || !Email.Contains("@"))
+                {
+                    IsEmailErrorVisible = true;
+                    EmailErrorMessage = "Please enter a valid email.";
+                    isValid = false;
+                }
+                if (string.IsNullOrWhiteSpace(Password) || Password.Length < 6)
+                {
+                    IsPasswordErrorVisible = true;
+                    PasswordErrorMessage = "Password must be at least 6 characters.";
+                    isValid = false;
+                }
+                if (Password != ConfirmPassword)
+                {
+                    IsConfirmPasswordErrorVisible = true;
+                    ConfirmPasswordErrorMessage = "Passwords do not match.";
+                    isValid = false;
+                }
+                if (!isValid)
+                {
+                    IsSignUpSuccessful = false;
+                    return;
+                }
+                await Task.Delay(1500);
+                IsLoginSuccessful = true;
+
+                // Save credentials to secure storage
+                await SecureStorage.Default.SetAsync("UserEmail", Email);
+                await SecureStorage.Default.SetAsync("UserPassword", Password);
+
+                IsSignUpSuccessful = true;
+                OnPropertyChanged(nameof(IsSignUpSuccessful));
+                ClearAllFields();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"SignUpAsync Exception: {ex.Message}");
+                IsSignUpSuccessful = false;
+                IsLoginSuccessful = false;
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
-        // Error Message Properties
-        private bool _isEmailErrorVisible;
-        public bool IsEmailErrorVisible
-        {
-            get => _isEmailErrorVisible;
-            set { _isEmailErrorVisible = value; OnPropertyChanged(); }
-        }
-        private string _emailErrorMessage;
-        public string EmailErrorMessage
-        {
-            get => _emailErrorMessage;
-            set { _emailErrorMessage = value; OnPropertyChanged(); }
-        }
 
-        private bool _isPasswordErrorVisible;
-        public bool IsPasswordErrorVisible
+        public void ClearAllErrors()
         {
-            get => _isPasswordErrorVisible;
-            set { _isPasswordErrorVisible = value; OnPropertyChanged(); }
-        }
-        private string _passwordErrorMessage;
-        public string PasswordErrorMessage
-        {
-            get => _passwordErrorMessage;
-            set { _passwordErrorMessage = value; OnPropertyChanged(); }
-        }
-
-        private bool _isConfirmPasswordErrorVisible;
-        public bool IsConfirmPasswordErrorVisible
-        {
-            get => _isConfirmPasswordErrorVisible;
-            set { _isConfirmPasswordErrorVisible = value; OnPropertyChanged(); }
-        }
-        private string _confirmPasswordErrorMessage;
-        public string ConfirmPasswordErrorMessage
-        {
-            get => _confirmPasswordErrorMessage;
-            set { _confirmPasswordErrorMessage = value; OnPropertyChanged(); }
-        }
-
-        // Commands
-        public ICommand SignInCommand { get; }
-        public ICommand SignUpCommand { get; }
-        public AuthViewModel()
-        {
-            IsSignUpMode = false; // Default to Sign In mode
-            SignInCommand = new Command(async () => await ExecuteSignInAsync(), CanExecuteSignIn);
-            SignUpCommand = new Command(async () => await ExecuteSignUpAsync(), CanExecuteSignUp);
-            ToggleSignUpCommand = new Command(() => IsSignUpMode = !IsSignUpMode);
-
-            IsSignUpMode = false; // Default to Sign In mode
-            ClearAllErrors();
-        }
-        private void ClearAllErrors()
-        {
+            IsNameErrorVisible = false;
+            NameErrorMessage = string.Empty;
             IsEmailErrorVisible = false;
             EmailErrorMessage = string.Empty;
             IsPasswordErrorVisible = false;
@@ -173,125 +170,22 @@ namespace Gameromicon.ViewModels
             IsConfirmPasswordErrorVisible = false;
             ConfirmPasswordErrorMessage = string.Empty;
         }
-        private void ClearAllFields()
+
+        public void ClearAllFields()
         {
-            Username = string.Empty;
             Email = string.Empty;
             Password = string.Empty;
             ConfirmPassword = string.Empty;
+            Name = string.Empty;
         }
-        private async Task ExecuteSignInAsync()
+
+        [RelayCommand]
+        private void ToggleSignUp()
         {
-            IsBusy = true;
-            IsValid = true;
-            try
-            {
-                ClearAllErrors();
-                // Validate input
-                if (string.IsNullOrWhiteSpace(Email))
-                {
-                    IsEmailErrorVisible = true;
-                    EmailErrorMessage = "Email is required.";
-                    IsValid = false;
-                }
-                if (string.IsNullOrWhiteSpace(Password))
-                {
-                    IsPasswordErrorVisible = true;
-                    PasswordErrorMessage = "Password is required.";
-                    IsValid = false;
-                }
-                if (ProfilePassword != Password)
-                {
-                    IsPasswordErrorVisible = true;
-                    PasswordErrorMessage = "Wrong password, please type in the correct password";
-                    IsValid = false;
-                }
-                if (ProfileEmail != Email)
-                {
-                    IsEmailErrorVisible = true;
-                    EmailErrorMessage = "There is no user with that email, please try a different email.";
-                    IsValid = false;
-                }
-                if(!IsValid)
-                {
-                    return;
-                }
-                // Call your authentication service here
-                // await AuthService.SignInAsync(Email, Password);
-                // On success, navigate to the next page or show success message
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Exception in SignIn/SignUp: {ex}");
-            }
-            finally
-            {
-                IsBusy = false;
-            }
-            IsLoginSuccessful = true;
-        }
-        private async Task ExecuteSignUpAsync()
-        {
-            IsValid = true;
-            IsBusy = true;
-            try
-            {
-                ClearAllErrors();
-                // Validate input
-                if (string.IsNullOrWhiteSpace(Email))
-                {
-                    IsEmailErrorVisible = true;
-                    EmailErrorMessage = "Email is required.";
-                    IsValid = false;
-                }
-                if (string.IsNullOrWhiteSpace(Password))
-                {
-                    IsPasswordErrorVisible = true;
-                    PasswordErrorMessage = "Password is required.";
-                    IsValid = false;
-                }
-                if (string.IsNullOrWhiteSpace(ConfirmPassword))
-                {
-                    IsConfirmPasswordErrorVisible = true;
-                    ConfirmPasswordErrorMessage = "Confirm Password is required.";
-                    IsValid = false;
-                }
-                if (Password != ConfirmPassword)
-                {
-                    IsConfirmPasswordErrorVisible = true;
-                    ConfirmPasswordErrorMessage = "Passwords do not match.";
-                    IsValid = false;
-                }
-                if (!IsValid)
-                {
-                    return;
-                }
-                // Call your authentication service here
-                // await AuthService.SignUpAsync(Email, Password, Username);
-                // On success, navigate to the next page or show success message
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Exception in SignIn/SignUp: {ex}");
-            }
-            finally
-            {
-                IsBusy = false;
-            }
-            ProfileEmail = Email;
-            ProfilePassword = Password;
-            IsSignUpMode = false;
+            Debug.WriteLine("ToggleSignUp called");
+            IsSignUpMode = true;
+            ClearAllErrors();
             ClearAllFields();
-            Debug.WriteLine("SignUpCommand executed!");
         }
-        private bool CanExecuteSignIn()
-        {
-            return !IsBusy && !string.IsNullOrEmpty(ProfileEmail) && !string.IsNullOrEmpty(ProfilePassword);
-        }
-        private bool CanExecuteSignUp()
-        {
-            return !IsBusy;
-        }
-        public ICommand ToggleSignUpCommand { get; private set; }
     }
 }

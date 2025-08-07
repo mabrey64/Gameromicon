@@ -7,6 +7,7 @@ using SQLite;
 using System.IO;
 using Gameromicon.Classes;
 using System.Data.SqlTypes;
+using System.Threading;
 
 namespace Gameromicon.Services
 {
@@ -26,7 +27,7 @@ namespace Gameromicon.Services
                 return; // Database already initialized
             }
             string dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "gameromicon.db");
-            _database = new SQLiteAsyncConnection(dbPath, SQLite.SQLiteOPenFlags.ReadWrite | SQLite.SQLiteOpenFlags.Create | SQLite.SQLiteOpenFlags.SharedCache);
+            _database = new SQLiteAsyncConnection(dbPath, SQLite.SQLiteOpenFlags.ReadWrite | SQLite.SQLiteOpenFlags.Create | SQLite.SQLiteOpenFlags.SharedCache);
 
             // Create tables for each class
             await _database.CreateTableAsync<Game>();
@@ -72,7 +73,7 @@ namespace Gameromicon.Services
             foreach (var gp in gamePlatforms)
             {
                 // CORRECT: We use the ConsoleID from the GamePlatform linking table.
-                var console = await GetByIdAsync<GameConsole>(gp.ConsoleID);
+                var console = await GetByIdAsync<GameConsole>(gp.GameConsoleID);
                 if (console != null)
                 {
                     consoles.Add(console);

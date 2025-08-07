@@ -6,4 +6,9 @@ public partial class GameListPage : ContentPage
 	{
 		InitializeComponent();
 	}
+
+	public async void OnAddGameButtonClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync(nameof(AddGamePage));
+    }
 }

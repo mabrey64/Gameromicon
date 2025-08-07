@@ -4,17 +4,20 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:pages="clr-namespace:Gameromicon.Pages"
-    Shell.FlyoutBehavior="Flyout"
+    Shell.FlyoutBehavior="Disabled"
     Title="Gameromicon">
 
+    <!-- The app will always start with the login page.
+         Other pages will be navigated to from here only after a successful login. -->
     <ShellContent
         Title="Login"
         ContentTemplate="{DataTemplate pages:AuthPage}"
         Route="AuthPage" />
 
-    <!--<ShellContent
-        Title="My Games"
-        ContentTemplate="{DataTemplate local:GameListPage}"
-        Route="GameListPage" />-->
+    <ShellContent
+        Title="Game List"
+        ContentTemplate="{DataTemplate pages:GameListPage}"
+        Route="GameListPage" />
+    
 
-</Shell>
+</Shell> 

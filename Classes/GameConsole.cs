@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Gameromicon.Classes
 {
+    // This is the GameConsole class, which represents a gaming console in the application. Not to be confused with the GamePlatform class, which is used to associate games with consoles.
     public class GameConsole
     {
         public int ID { get; set; } // Unique identifier for the console

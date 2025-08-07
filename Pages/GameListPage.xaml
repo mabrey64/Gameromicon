@@ -107,7 +107,7 @@
         <!--Bottom Bar: Add Game Button-->
             <Button Grid.Row="2"
                     Text="+"
-                    Command="{Binding AddGameCommand}"
+                    Command="{Binding OnAddGameButtonClicked}"
                     BackgroundColor="#006400"
                     TextColor="Black"
                     FontSize="Medium"
