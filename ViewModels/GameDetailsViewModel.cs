@@ -11,47 +11,69 @@ using System.Diagnostics;
 
 namespace Gameromicon.ViewModels
 {
+    /// <summary>
+    /// ViewModel for adding and editing game details.
+    /// Handles all data binding and commands for the Add/Edit Game page.
+    /// </summary>
     public partial class GameDetailsViewModel : BaseViewModel
     {
+        // The game currently being added or edited
         [ObservableProperty]
         private Game? currentGame;
 
+        // Search query for external API title search
         [ObservableProperty]
         private string? searchTitleQuery;
 
+        // List of available platforms for selection
         [ObservableProperty]
         private ObservableCollection<GameConsole> availablePlatforms;
 
+        // List of available conditions for selection
         [ObservableProperty]
         private ObservableCollection<string> availableConditions;
 
+        // List of available publishers for selection
         [ObservableProperty]
         private ObservableCollection<Publisher> availablePublishers;
 
+        // The publisher currently selected
         [ObservableProperty]
         private Publisher? selectedPublisher;
 
+        // List of available series for selection
         [ObservableProperty]
         private ObservableCollection<Series> availableSeries;
 
+        // The series currently selected
         [ObservableProperty]
         private Series? selectedSeries;
 
+        // List of available genres for selection
         [ObservableProperty]
         private ObservableCollection<Genre> availableGenres;
 
+        // The genres currently selected (multi-select)
         [ObservableProperty]
         private IList<Genre> selectedGenres = new List<Genre>();
 
+        // The platform selected for searching external APIs
         [ObservableProperty]
         private GameConsole? selectedSearchPlatform;
 
+        // The platform currently selected for the game
         [ObservableProperty]
         private GameConsole? selectedPlatform;
 
+        /// <summary>
+        /// Constructor initializes default values and populates reference data.
+        /// </summary>
         public GameDetailsViewModel()
         {
+            // Initialize a new game object for data binding
             CurrentGame = new Game();
+
+            // Populate available platforms
             AvailablePlatforms = new ObservableCollection<GameConsole>
             {
                 new GameConsole {ID = 1, Name = "Nintendo Switch"},
@@ -59,6 +81,8 @@ namespace Gameromicon.ViewModels
                 new GameConsole {ID = 3, Name = "Xbox Series X"},
                 new GameConsole {ID = 4, Name = "PC"}
             };
+
+            // Populate available conditions
             AvailableConditions = new ObservableCollection<string>
             {
                 "New",
@@ -67,6 +91,8 @@ namespace Gameromicon.ViewModels
                 "Good",
                 "Acceptable"
             };
+
+            // Populate available publishers
             AvailablePublishers = new ObservableCollection<Publisher>
             {
                 new Publisher { ID = 1, Name = "Nintendo" },
@@ -75,6 +101,8 @@ namespace Gameromicon.ViewModels
                 new Publisher { ID = 4, Name = "Electronic Arts" },
                 new Publisher { ID = 5, Name = "Sega" },
             };
+
+            // Populate available series
             AvailableSeries = new ObservableCollection<Series>
             {
                 new Series { ID = 1, Name = "The Legend of Zelda" },
@@ -83,6 +111,8 @@ namespace Gameromicon.ViewModels
                 new Series { ID = 4, Name = "Call of Duty" },
                 new Series { ID = 5, Name = "Super Mario" }
             };
+
+            // Populate available genres
             AvailableGenres = new ObservableCollection<Genre>
             {
                 new Genre { ID = 1, Name = "Action" },
@@ -93,6 +123,9 @@ namespace Gameromicon.ViewModels
             };
         }
 
+        /// <summary>
+        /// Command to scan a barcode (stub for future implementation).
+        /// </summary>
         [RelayCommand]
         public async Task ScanBarcode()
         {
@@ -100,6 +133,9 @@ namespace Gameromicon.ViewModels
             await Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Command to search an external API by title (stub for future implementation).
+        /// </summary>
         [RelayCommand]
         private async Task SearchExternalApiByTitle()
         {
@@ -107,12 +143,16 @@ namespace Gameromicon.ViewModels
             await Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Command to save the current game (stub for future implementation).
+        /// </summary>
         [RelayCommand]
         private async Task SaveGame()
         {
             if (CurrentGame != null && CurrentGame.Validate())
             {
                 Debug.WriteLine($"Saving game: {CurrentGame.Name}");
+                // Actual save logic should be implemented here
             }
             else
             {
@@ -120,12 +160,16 @@ namespace Gameromicon.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command to delete the current game (stub for future implementation).
+        /// </summary>
         [RelayCommand]
         private async Task DeleteGame()
         {
             if (CurrentGame != null)
             {
                 Debug.WriteLine($"Deleting game: {CurrentGame?.Name}");
+                // Actual delete logic should be implemented here
                 CurrentGame = null; // Clear the current game after deletion
             }
             else
@@ -134,9 +178,13 @@ namespace Gameromicon.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command to fetch cover art for the current game from an external API.
+        /// </summary>
         [RelayCommand]
         public async Task FetchCoverArt()
         {
+            // Only attempt fetch if the game and its name are set
             if (CurrentGame != null && !string.IsNullOrWhiteSpace(CurrentGame.Name))
             {
                 try
@@ -145,6 +193,7 @@ namespace Gameromicon.ViewModels
                     // Replace with your actual API endpoint and parameters
                     var apiUrl = $"https://your-api.com/coverart?title={Uri.EscapeDataString(CurrentGame.Name)}";
                     var response = await http.GetAsync(apiUrl);
+
                     if (response.IsSuccessStatusCode)
                     {
                         // Assume the API returns a JSON object with a "coverUrl" property

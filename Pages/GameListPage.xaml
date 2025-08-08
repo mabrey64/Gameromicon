@@ -12,7 +12,7 @@
                     StrokeShape="RoundRectangle 8"
                     Padding="10"
                     HorizontalOptions="FillAndExpand">
-            <Entry Placeholder="Search games..."
+                <Entry Placeholder="Search games..."
                    Text="{Binding SearchQuery}"
                    HorizontalOptions="FillAndExpand"
                    FontSize="Medium"
@@ -43,8 +43,7 @@
         <CollectionView Grid.Row="1"
                         ItemsSource="{Binding GameCollection}"
                         SelectionMode="Single"
-                        SelectedItem="{Binding SelectedGame}"
-                        SelectionChangedCommand="{Binding SelectGameCommand}"
+                        SelectionChanged="OnGameSelected"
                         Margin="15,0,15,0">
             <CollectionView.EmptyView>
                 <VerticalStackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
@@ -63,9 +62,28 @@
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                <Frame BorderColor="#1A743F" CornerRadius="10" Padding="15" HasShadow="True">
-                    <Grid ColumnDefinitions="Auto, *, Auto">
-                        <!--Game Cover Image/Boxart (currently hidden)-->
+                    <Frame BorderColor="#1A743F" CornerRadius="10" Padding="15" HasShadow="True">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnGameTapped"/>
+                        </Frame.GestureRecognizers>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup Name="CommonStates">
+                                <VisualState Name="Selected">
+                                    <VisualState.Setters>
+                                        <Setter Property="BackgroundColor" Value="#CCE5FF"/>
+                                        <Setter Property="BorderColor" Value="#007BFF"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState Name="Normal">
+                                    <VisualState.Setters>
+                                        <Setter Property="BackgroundColor" Value="White"/>
+                                        <Setter Property="BorderColor" Value="#1A743F"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid ColumnDefinitions="Auto, *, Auto">
+                            <!--Game Cover Image/Boxart (currently hidden)-->
                             <!-- In your CollectionView.ItemTemplate in GameListPage.xaml -->
                             <Image Source="{Binding CoverArtUrl, FallbackValue='https://placehold.co/80x120/cccccc/333333?text=No+Art'}"
                                    WidthRequest="80"
@@ -74,46 +92,47 @@
                                    Margin="0,0,10,0"/>
 
                             <!--Game Details-->
-                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
-                            <Label Text="{Binding Name}"
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                <Label Text="{Binding Name}"
                                    FontSize="Large"
                                    FontAttributes="Bold"
-                                   TextColor="#ECF0F1"/>
-                            <Label Text="{Binding GenreID, StringFormat='Genre ID: {0}'}"
+                                   TextColor="#444444"/>
+                                <Label Text="{Binding GenreID, StringFormat='Genre ID: {0}'}"
                                    FontSize="Small"
-                                   TextColor="#AAAAAA"/>
-                            <Label Text="{Binding PublisherID, StringFormat='Publisher ID: {0}'}"
+                                   TextColor="#444444"/>
+                                <Label Text="{Binding PublisherID, StringFormat='Publisher ID: {0}'}"
                                    FontSize="Small"
-                                   TextColor="#AAAAAA"/>
-                            <Label Text="{Binding SeriesID, StringFormat='Series ID: {0}'}"
+                                   TextColor="#444444"/>
+                                <Label Text="{Binding SeriesID, StringFormat='Series ID: {0}'}"
                                    FontSize="Small"
-                                   TextColor="#AAAAAA"/>
-                            <Label Text="{Binding CollectedDate, StringFormat='Added: {0:d}'}"
+                                   TextColor="#444444"/>
+                                <Label Text="{Binding CollectedDate, StringFormat='Added: {0:d}'}"
                                    FontSize="Small"
-                                   TextColor="#AAAAAA"/>
-                        </VerticalStackLayout>
-                        <!--Status Indicators-->
-                        <VerticalStackLayout Grid.Column="2" HorizontalOptions="End" VerticalOptions="Center">
-                            <!-- Updated: CiB status color to deep green -->
-                            <Label Text="CiB" IsVisible="{Binding CiB}" TextColor="#1E8449" FontAttributes="Bold" />
-                            <!-- Updated: Beaten status color to a tech-themed purple -->
-                            <Label Text="Beaten" IsVisible="{Binding IsBeaten}" TextColor="#8A2BE2" FontAttributes="Bold" />
-                        </VerticalStackLayout>
-                    </Grid>
-                </Frame>
-            </DataTemplate>
-        </CollectionView.ItemTemplate>
-    </CollectionView>
+                                   TextColor="#444444"/>
+                            </VerticalStackLayout>
+                            <!--Status Indicators-->
+                            <VerticalStackLayout Grid.Column="2" HorizontalOptions="End" VerticalOptions="Center">
+                                <!-- Updated: CiB status color to deep green -->
+                                <Label Text="CiB" IsVisible="{Binding CiB}" TextColor="#1E8449" FontAttributes="Bold" />
+                                <!-- Updated: Beaten status color to a tech-themed purple -->
+                                <Label Text="Beaten" IsVisible="{Binding IsBeaten}" TextColor="#8A2BE2" FontAttributes="Bold" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
 
         <!--Bottom Bar: Add Game Button-->
-            <Button Grid.Row="2"
+        <Button x:Name="EditOrAddButton"
+                    Grid.Row="2"
                     Text="+"
-                    Clicked="OnAddGameButtonClicked"
+                    Clicked="OnEditOrAddButtonClicked"
                     BackgroundColor="#006400"
                     TextColor="Black"
                     FontSize="Medium"
                     CornerRadius="8"
                     HorizontalOptions="EndAndExpand"
-                    Padding="10"/> 
+                    Padding="10"/>
     </Grid>
 </ContentPage>

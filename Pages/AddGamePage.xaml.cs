@@ -1,6 +1,7 @@
 using Gameromicon.Classes;
 using Gameromicon.ViewModels;
 using System.Collections.ObjectModel;
+using System.Net.Http.Json;
 
 namespace Gameromicon.Pages;
 
@@ -75,28 +76,47 @@ public partial class AddGamePage : ContentPage
 
             if (game.Validate(genreIds, platformIds))
             {
-                _gameListViewModel.GameCollection.Add(game);
+                // Replace with your real API endpoint
+                var apiUrl = "https://jsonplaceholder.typicode.com/posts"; // Example endpoint
 
-                foreach (var genre in vm.SelectedGenres)
-                    AddGamePage.GameGenreCollection.Add(new GameGenre { GameID = game.ID, GenreID = genre.ID });
+                try
+                {
+                    using var http = new HttpClient();
+                    var response = await http.PostAsJsonAsync(apiUrl, game);
 
-                if (vm.SelectedPlatform != null)
-                    AddGamePage.GamePlatformCollection.Add(new GamePlatform { GameID = game.ID, GameConsoleID = vm.SelectedPlatform.ID });
+                    if (response.IsSuccessStatusCode)
+                    {
+                        // Optionally, get the returned game (with ID, etc.)
+                        // var savedGame = await response.Content.ReadFromJsonAsync<Game>();
 
-                await DisplayAlert("Success", "Game saved successfully!", "OK");
+                        _gameListViewModel.GameCollection.Add(game);
 
-                await Navigation.PopAsync();
+                        foreach (var genre in vm.SelectedGenres)
+                            AddGamePage.GameGenreCollection.Add(new GameGenre { GameID = game.ID, GenreID = genre.ID });
+
+                        if (vm.SelectedPlatform != null)
+                            AddGamePage.GamePlatformCollection.Add(new GamePlatform { GameID = game.ID, GameConsoleID = vm.SelectedPlatform.ID });
+
+                        await DisplayAlert("Success", "Game saved to API successfully!", "OK");
+                        await Navigation.PopAsync();
+                    }
+                    else
+                    {
+                        await DisplayAlert("Error", "Failed to save game to API.", "OK");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    await DisplayAlert("Error", $"API error: {ex.Message}", "OK");
+                }
             }
             else
             {
                 string errorMsg = string.Join("\n", game.ValidationErrors ?? new List<string> { "Unknown error." });
-                await DisplayAlert("Error", "Could not save the game.", "OK");
+                await DisplayAlert("Error", errorMsg, "OK");
             }
         }
     }
-
-
-
 
     private async void OnDeleteClicked(object sender, EventArgs e)
     {
@@ -167,6 +187,11 @@ public partial class AddGamePage : ContentPage
             // Optionally, select the new platform by default
             vm.SelectedPlatform = newPlatform;
         }
+    }
+
+    private async void OnGetCoverImageClicked(object sender, EventArgs e)
+    {
+        await DisplayAlert("Coming Soon!", "Cover art fetching from an online API will be available in a future update.", "OK");
     }
 
 

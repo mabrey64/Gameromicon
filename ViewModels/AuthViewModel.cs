@@ -34,6 +34,7 @@ namespace Gameromicon.ViewModels
 
         public bool IsSignInMode => !IsSignUpMode;
 
+        // Handles the SignIn action
         [RelayCommand]
         private async Task SignInAsync()
         {
@@ -95,6 +96,9 @@ namespace Gameromicon.ViewModels
                 IsBusy = false;
             }
         }
+
+
+        // Command to handle Sign Up action
         [RelayCommand]
         private async Task SignUpAsync()
         {
@@ -158,7 +162,7 @@ namespace Gameromicon.ViewModels
             }
         }
 
-
+        // Method to clear all error messages and visibility flags
         public void ClearAllErrors()
         {
             IsNameErrorVisible = false;
@@ -171,6 +175,7 @@ namespace Gameromicon.ViewModels
             ConfirmPasswordErrorMessage = string.Empty;
         }
 
+        // Method to clear all input fields
         public void ClearAllFields()
         {
             Email = string.Empty;
@@ -179,6 +184,7 @@ namespace Gameromicon.ViewModels
             Name = string.Empty;
         }
 
+        // Method to toggle between Sign In and Sign Up modes
         [RelayCommand]
         private void ToggleSignUp()
         {

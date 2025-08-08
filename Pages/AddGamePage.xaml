@@ -60,11 +60,21 @@
                        PlaceholderColor="#AAAAAA" />
             </Frame>
 
-            <Image Source="{Binding CurrentGame.CoverArtUrl, FallbackValue='https://placehold.co/150x200/cccccc/333333?text=Boxart'}"
+            <!--<Image Source="{Binding CurrentGame.CoverArtUrl, FallbackValue='https://placehold.co/150x200/cccccc/333333?text=Boxart'}"
                    Aspect="AspectFit"
                    HeightRequest="150"
                    HorizontalOptions="Center" />
-            <Button Text="Fetch Cover Art" Command="{Binding FetchCoverArtCommand}" />
+            <Button Text="Fetch Cover Art" Command="{Binding FetchCoverArtCommand}" />-->
+
+            <Button Text="Get Cover Image"
+                    Clicked="OnGetCoverImageClicked"
+                    BackgroundColor="#007bff"
+                    TextColor="White"
+                    FontSize="Medium"
+                    CornerRadius="8"
+                    HeightRequest="40"
+                    Margin="0,0,0,10"/>
+
 
 
             <Frame BorderColor="#DDDDDD" CornerRadius="8" Padding="0" BackgroundColor="#F0F0F0" HasShadow="False">
@@ -267,6 +277,17 @@
                     CornerRadius="10"
                     HeightRequest="60"
                     Margin="0,20,0,10" />
+            
+            <Button Text="Cancel"
+                    Clicked="OnCancelClicked"
+                    BackgroundColor="#888"
+                    TextColor="White"
+                    FontSize="Large"
+                    FontAttributes="Bold"
+                    CornerRadius="10"
+                    HeightRequest="60"
+                    Margin="0,20,0,10" />
+
             <Button Text="DELETE GAME"
                     Clicked="OnDeleteClicked"
                     BackgroundColor="#dc3545"
