@@ -27,7 +27,9 @@ namespace Gameromicon.Classes
         // Foreign keys for relationships
         public int PublisherID { get; set; } // Foreign key to Publisher
         public int? SeriesID { get; set; } // Foreign key to Series, nullable as a game may not belong to a series
-        public int ProfileID { get; set; } // Foreign key to Profile
+        // public int ProfileID { get; set; } // Foreign key to Profile. Commented out nas it went unused.
+        public string? CoverArtUrl { get; set; }
+
 
         public Game()
         {
@@ -43,14 +45,24 @@ namespace Gameromicon.Classes
          * Currently validates the Name property.
          * More complex validation logic can be added later as needed.
          */
-        public bool Validate()
+
+        public List<string> ValidationErrors { get; private set; } = new();
+        public bool Validate(List<int> genreIds = null, List<int> platformIds = null)
         {
-            if(string.IsNullOrWhiteSpace(Name))
-            {
-                System.Console.WriteLine("Validation error: Name cannot be empty.");
-                return false;
-            }
-            return true;
+            ValidationErrors.Clear();
+
+            if (string.IsNullOrWhiteSpace(Name))
+                ValidationErrors.Add("Name is required.");
+            if (PublisherID == 0)
+                ValidationErrors.Add("Publisher is required.");
+            if (SeriesID == null || SeriesID == 0)
+                ValidationErrors.Add("Series is required.");
+            if (genreIds == null || !genreIds.Any())
+                ValidationErrors.Add("At least one genre is required.");
+            if (platformIds == null || !platformIds.Any())
+                ValidationErrors.Add("At least one platform is required.");
+
+            return !ValidationErrors.Any();
         }
 
         /*

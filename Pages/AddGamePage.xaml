@@ -19,7 +19,14 @@
                    HorizontalOptions="Center"
                    Margin="0,0,0,10" />
 
+            <Label Text="Fields marked with * are required."
+                   FontSize="Small"
+                   TextColor="Red"
+                   HorizontalOptions="Center"
+                   Margin="0,0,0,10" />
+
             <!-- Game Name Input -->
+            <Label Text="Name of Game *" FontSize="Small" TextColor="Gray"/>
             <Frame BorderColor="#DDDDDD" CornerRadius="8" Padding="12" BackgroundColor="#F0F0F0" HasShadow="False">
                 <Entry Placeholder="Name of Game"
                        Text="{Binding CurrentGame.Name}"
@@ -52,6 +59,13 @@
                        BackgroundColor="Transparent"
                        PlaceholderColor="#AAAAAA" />
             </Frame>
+
+            <Image Source="{Binding CurrentGame.CoverArtUrl, FallbackValue='https://placehold.co/150x200/cccccc/333333?text=Boxart'}"
+                   Aspect="AspectFit"
+                   HeightRequest="150"
+                   HorizontalOptions="Center" />
+            <Button Text="Fetch Cover Art" Command="{Binding FetchCoverArtCommand}" />
+
 
             <Frame BorderColor="#DDDDDD" CornerRadius="8" Padding="0" BackgroundColor="#F0F0F0" HasShadow="False">
                 <Picker Title="Platform for Search"
@@ -104,7 +118,6 @@
                 <Picker Title="Select Condition"
                         ItemsSource="{Binding AvailableConditions}"
                         SelectedItem="{Binding CurrentGame.Condition}"
-                        ItemDisplayBinding="{Binding Name}"
                         FontSize="Medium"
                         BackgroundColor="Transparent"
                         TitleColor="#AAAAAA" />
@@ -129,10 +142,13 @@
 
             <Label Text="Release Date" FontSize="Small" TextColor="Gray" />
             <Frame BorderColor="#DDDDDD" CornerRadius="8" Padding="0" BackgroundColor="#F0F0F0" HasShadow="False">
-                <DatePicker Date="{Binding CurrentGame.ReleaseDate}"
+                <DatePicker Date="{Binding CurrentGame.CollectedDate}"
+                            MinimumDate="1900-01-01"
+                            MaximumDate="2100-12-31"
                             Format="d"
                             FontSize="Medium"
                             BackgroundColor="Transparent"/>
+
             </Frame>
 
             <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
@@ -156,7 +172,7 @@
             </Frame>
 
             <!-- Reference Data Selectors -->
-            <Label Text="Publisher" FontSize="Small" TextColor="Gray" />
+            <Label Text="Publisher *" FontSize="Small" TextColor="Gray" />
             <Frame BorderColor="#DDDDDD" CornerRadius="8" Padding="0" BackgroundColor="#F0F0F0" HasShadow="False">
                 <Picker Title="Select Publisher"
                         ItemsSource="{Binding AvailablePublishers}"
@@ -166,8 +182,18 @@
                         BackgroundColor="Transparent"
                         TitleColor="#AAAAAA" />
             </Frame>
+            <Button Text="Add Publisher"
+                    Clicked="OnAddPublisherClicked"
+                    BackgroundColor="#28a745"
+                    TextColor="White"
+                    FontSize="Medium"
+                    CornerRadius="8"
+                    HeightRequest="40"
+                    Margin="0,0,0,10"/>
 
-            <Label Text="Series" FontSize="Small" TextColor="Gray" />
+
+
+            <Label Text="Series *" FontSize="Small" TextColor="Gray" />
             <Frame BorderColor="#DDDDDD" CornerRadius="8" Padding="0" BackgroundColor="#F0F0F0" HasShadow="False">
                 <Picker Title="Select Series"
                         ItemsSource="{Binding AvailableSeries}"
@@ -177,20 +203,63 @@
                         BackgroundColor="Transparent"
                         TitleColor="#AAAAAA" />
             </Frame>
+            <Button Text="Create Series *"
+                    Clicked="OnCreateSeriesClicked"
+                    BackgroundColor="#28a745"
+                    TextColor="White"
+                    FontSize="Medium"
+                    CornerRadius="8"
+                    HeightRequest="40"
+                    Margin="0,0,0,10"/>
+
 
             <!-- Multi-select for Genres and Platforms would typically require a custom control or a separate pop-up/page -->
-            <Label Text="Genres (Multi-select)" FontAttributes="Bold" Margin="0,10,0,0" TextColor="#333333" />
+            <Label Text="Genres (Multi-select) *" FontAttributes="Bold" Margin="0,10,0,0" TextColor="#333333" />
             <Frame BorderColor="#DDDDDD" CornerRadius="8" Padding="12" HasShadow="False">
-                <Label Text="[ Placeholder for Multi-select Genre UI ]" TextColor="Gray" FontSize="Small" />
+                <CollectionView ItemsSource="{Binding AvailableGenres}" SelectionMode="Multiple"
+                SelectedItems="{Binding SelectedGenres, Mode=TwoWay}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <StackLayout Orientation="Horizontal" Padding="4">
+                                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+                                <Label Text="{Binding Name}" VerticalOptions="Center"/>
+                            </StackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
             </Frame>
-            <Label Text="Platforms (Multi-select)" FontAttributes="Bold" Margin="0,10,0,0" TextColor="#333333" />
-            <Frame BorderColor="#DDDDDD" CornerRadius="8" Padding="12" HasShadow="False">
-                <Label Text="[ Placeholder for Multi-select Platform UI ]" TextColor="Gray" FontSize="Small" />
+            <Button Text="Add Genre"
+                    Clicked="OnAddGenreClicked"
+                    BackgroundColor="#28a745"
+                    TextColor="White"
+                    FontSize="Medium"
+                    CornerRadius="8"
+                    HeightRequest="40"
+                    Margin="0,0,0,10"/>
+
+            <Label Text="Platform *" FontAttributes="Bold" Margin="0,10,0,0" TextColor="#333333" />
+            <Frame BorderColor="#DDDDDD" CornerRadius="8" Padding="0" BackgroundColor="#F0F0F0" HasShadow="False">
+                <Picker Title="Select Platform"
+                        ItemsSource="{Binding AvailablePlatforms}"
+                        ItemDisplayBinding="{Binding Name}"
+                        SelectedItem="{Binding SelectedPlatform, Mode=TwoWay}"
+                        FontSize="Medium"
+                        BackgroundColor="Transparent"
+                        TitleColor="#AAAAAA" />
             </Frame>
+
+            <Button Text="Add Platform"
+                    Clicked="OnAddPlatformClicked"
+                    BackgroundColor="#28a745"
+                    TextColor="White"
+                    FontSize="Medium"
+                    CornerRadius="8"
+                    HeightRequest="40"
+                    Margin="0,0,0,10"/>
 
             <!-- Action Buttons -->
             <Button Text="SAVE GAME"
-                    Command="{Binding SaveGameCommand}"
+                    Clicked="OnSaveClicked"
                     BackgroundColor="#007bff"
                     TextColor="White"
                     FontSize="Large"
@@ -199,7 +268,7 @@
                     HeightRequest="60"
                     Margin="0,20,0,10" />
             <Button Text="DELETE GAME"
-                    Command="{Binding DeleteGameCommand}"
+                    Clicked="OnDeleteClicked"
                     BackgroundColor="#dc3545"
                     TextColor="White"
                     FontSize="Large"

@@ -23,9 +23,6 @@ namespace Gameromicon.ViewModels
         private ObservableCollection<GameConsole> availablePlatforms;
 
         [ObservableProperty]
-        private GameConsole? selectedSearchPlatform;
-
-        [ObservableProperty]
         private ObservableCollection<string> availableConditions;
 
         [ObservableProperty]
@@ -40,10 +37,22 @@ namespace Gameromicon.ViewModels
         [ObservableProperty]
         private Series? selectedSeries;
 
+        [ObservableProperty]
+        private ObservableCollection<Genre> availableGenres;
+
+        [ObservableProperty]
+        private IList<Genre> selectedGenres = new List<Genre>();
+
+        [ObservableProperty]
+        private GameConsole? selectedSearchPlatform;
+
+        [ObservableProperty]
+        private GameConsole? selectedPlatform;
+
         public GameDetailsViewModel()
         {
             CurrentGame = new Game();
-            availablePlatforms = new ObservableCollection<GameConsole>
+            AvailablePlatforms = new ObservableCollection<GameConsole>
             {
                 new GameConsole {ID = 1, Name = "Nintendo Switch"},
                 new GameConsole {ID = 2, Name = "PlayStation 5"},
@@ -74,8 +83,16 @@ namespace Gameromicon.ViewModels
                 new Series { ID = 4, Name = "Call of Duty" },
                 new Series { ID = 5, Name = "Super Mario" }
             };
-
+            AvailableGenres = new ObservableCollection<Genre>
+            {
+                new Genre { ID = 1, Name = "Action" },
+                new Genre { ID = 2, Name = "Adventure" },
+                new Genre { ID = 3, Name = "Role-Playing" },
+                new Genre { ID = 4, Name = "Simulation" },
+                new Genre { ID = 5, Name = "Strategy" }
+            };
         }
+
         [RelayCommand]
         public async Task ScanBarcode()
         {
@@ -114,6 +131,39 @@ namespace Gameromicon.ViewModels
             else
             {
                 Debug.WriteLine("No game to delete.");
+            }
+        }
+
+        [RelayCommand]
+        public async Task FetchCoverArt()
+        {
+            if (CurrentGame != null && !string.IsNullOrWhiteSpace(CurrentGame.Name))
+            {
+                try
+                {
+                    using var http = new HttpClient();
+                    // Replace with your actual API endpoint and parameters
+                    var apiUrl = $"https://your-api.com/coverart?title={Uri.EscapeDataString(CurrentGame.Name)}";
+                    var response = await http.GetAsync(apiUrl);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        // Assume the API returns a JSON object with a "coverUrl" property
+                        var json = await response.Content.ReadAsStringAsync();
+                        var coverUrl = System.Text.Json.JsonDocument.Parse(json).RootElement.GetProperty("coverUrl").GetString();
+                        CurrentGame.CoverArtUrl = coverUrl;
+                        OnPropertyChanged(nameof(CurrentGame));
+                    }
+                    else
+                    {
+                        // Optionally handle not found or error
+                        CurrentGame.CoverArtUrl = null;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error fetching cover art: {ex.Message}");
+                    CurrentGame.CoverArtUrl = null;
+                }
             }
         }
     }

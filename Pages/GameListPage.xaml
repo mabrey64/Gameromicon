@@ -65,14 +65,15 @@
                 <DataTemplate>
                 <Frame BorderColor="#1A743F" CornerRadius="10" Padding="15" HasShadow="True">
                     <Grid ColumnDefinitions="Auto, *, Auto">
-                        <!--Game Cover Image/Boxart-->
-                        <Image Grid.Column="0"
-                               Source="{Binding CoverImage}"
-                               WidthRequest="80"
-                               HeightRequest="120"
-                               Aspect="AspectFill"
-                               Margin="0,0,10,0"/>
-                        <!--Game Details-->
+                        <!--Game Cover Image/Boxart (currently hidden)-->
+                            <!-- In your CollectionView.ItemTemplate in GameListPage.xaml -->
+                            <Image Source="{Binding CoverArtUrl, FallbackValue='https://placehold.co/80x120/cccccc/333333?text=No+Art'}"
+                                   WidthRequest="80"
+                                   HeightRequest="120"
+                                   Grid.Column="0"
+                                   Margin="0,0,10,0"/>
+
+                            <!--Game Details-->
                         <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
                             <Label Text="{Binding Name}"
                                    FontSize="Large"
@@ -107,7 +108,7 @@
         <!--Bottom Bar: Add Game Button-->
             <Button Grid.Row="2"
                     Text="+"
-                    Command="{Binding OnAddGameButtonClicked}"
+                    Clicked="OnAddGameButtonClicked"
                     BackgroundColor="#006400"
                     TextColor="Black"
                     FontSize="Medium"

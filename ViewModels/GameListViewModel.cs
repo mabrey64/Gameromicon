@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Maui.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Gameromicon.Pages;
 
 namespace Gameromicon.ViewModels
 {
@@ -33,18 +34,71 @@ namespace Gameromicon.ViewModels
 
         public GameListViewModel()
         {
-            GameCollection = new ObservableCollection<Game>()
-            {
-                new Game { ID = 1, Name = "The Legend of Zelda: Breath of the Wild", Barcode = "1234567890123", Boxart = "zelda_botw.jpg", CollectedDate = DateTime.Now, CiB = true, Condition = "New", Region = "NA", NumberOfCopies = 1, Description = "An open-world action-adventure game set in the kingdom of Hyrule.", ReleaseDate = new DateTime(2017, 3, 3), IsBeaten = false, Is100Completed = false, PublisherID = 1, SeriesID = 1, ProfileID = 1 },
-                new Game { ID = 2, Name = "Super Mario Odyssey", Barcode = "1234567890124", Boxart = "mario_odyssey.jpg", CollectedDate = DateTime.Now, CiB = true, Condition = "Like New", Region = "EU", NumberOfCopies = 1, Description = "A platform game featuring Mario in a 3D world.", ReleaseDate = new DateTime(2017, 10, 27), IsBeaten = false, Is100Completed = false, PublisherID = 1, SeriesID = 2, ProfileID = 1 }
-
-            };
+            GameCollection = new ObservableCollection<Game>
+    {
+        new Game
+        {
+            ID = 1,
+            Name = "The Legend of Zelda: Breath of the Wild",
+            Barcode = "1234567890",
+            Boxart = "",
+            CollectedDate = DateTime.Now.AddMonths(-12),
+            CiB = true,
+            Condition = "Like New",
+            Region = "NA",
+            NumberOfCopies = 1,
+            Description = "Open-world adventure game.",
+            ReleaseDate = new DateTime(2017, 3, 3),
+            IsBeaten = true,
+            Is100Completed = false,
+            PublisherID = 1,
+            SeriesID = 1
+        },
+        new Game
+        {
+            ID = 2,
+            Name = "Halo Infinite",
+            Barcode = "0987654321",
+            Boxart = "",
+            CollectedDate = DateTime.Now.AddMonths(-6),
+            CiB = false,
+            Condition = "Good",
+            Region = "NA",
+            NumberOfCopies = 1,
+            Description = "First-person shooter.",
+            ReleaseDate = new DateTime(2021, 12, 8),
+            IsBeaten = false,
+            Is100Completed = false,
+            PublisherID = 3,
+            SeriesID = 3
+        },
+        new Game
+        {
+            ID = 3,
+            Name = "Final Fantasy VII Remake",
+            Barcode = "1122334455",
+            Boxart = "",
+            CollectedDate = DateTime.Now.AddMonths(-18),
+            CiB = true,
+            Condition = "Very Good",
+            Region = "JP",
+            NumberOfCopies = 2,
+            Description = "Remake of the classic RPG.",
+            ReleaseDate = new DateTime(2020, 4, 10),
+            IsBeaten = true,
+            Is100Completed = true,
+            PublisherID = 2,
+            SeriesID = 2
+        }
+    };
         }
 
         [RelayCommand]
         private Task Sort()
         {
-            Debug.WriteLine("Sorting games...");
+            var sorted = GameCollection.OrderBy(g => g.Name).ToList();
+            GameCollection = new ObservableCollection<Game>(sorted);
+            Debug.WriteLine("Games sorted by name.");
             return Task.CompletedTask;
         }
 
@@ -52,6 +106,7 @@ namespace Gameromicon.ViewModels
         private Task Filter()
         {
             Debug.WriteLine("Filtering games...");
+
             return Task.CompletedTask;
         }
 
@@ -68,12 +123,13 @@ namespace Gameromicon.ViewModels
         {
             if (game == null)
             {
-                Debug.WriteLine("No game selected.");
+                await Application.Current.MainPage.DisplayAlert("No Selection", "Please select a game.", "OK");
                 return;
             }
-            Debug.WriteLine($"Selected game: {game.Name}");
-            await Task.Delay(50);
-            selectedGame = null;
+
+            // Navigate to AddGamePage, passing the selected game for editing
+            await Application.Current.MainPage.Navigation.PushAsync(new AddGamePage(this, game));
         }
+
     }
 }
